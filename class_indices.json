@@ -1,6 +1,15 @@
+<<<<<<< HEAD
 {
     "Glioma_Tumor": 0,
     "Meningioma_Tumor": 1,
     "No_Tumor": 2,
     "Pituitary_Tumor": 3
 }
+=======
+{
+    "Glioma_Tumor": 0,
+    "Meningioma_Tumor": 1,
+    "No_Tumor": 2,
+    "Pituitary_Tumor": 3
+}
+>>>>>>> 21c42d241bfdadb03d12ffab0d5f249a3f867faf
