@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Brain Tumor Detector</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap">
+  <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- For SweetAlert -->
+</head>
+<body>
+
+  <div class="login-container">
+    <div class="login-box">
+      <h2>Brain Tumor Detection</h2>
+      <p class="subheading">Secure login to access the dashboard</p>
+      {% if error %}
+        <p class="error">{{ error }}</p>
+      {% endif %}
+      <form method="POST">
+        <div class="input-group">
+          <input type="text" name="username" placeholder="Username" required>
+        </div>
+        <div class="input-group">
+          <input type="password" name="password" placeholder="Password" required>
+        </div>
+        <button type="submit" class="btn-submit">Login</button>
+      </form>
+    </div>
+  </div>
+<div class="loader-overlay" id="loader">
+  <div class="spinner"></div>
+</div>
+
+  <div class="background-overlay"></div> <!-- Brain visual background -->
+<script>
+  window.addEventListener("load", () => {
+    const loader = document.getElementById("loader");
+    if (loader) {
+      loader.style.display = "none";
+    }
+  });
+</script>
+</body>
+
+
+</html>

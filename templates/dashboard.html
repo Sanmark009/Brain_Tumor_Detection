@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Brain Tumor Detection - Dashboard</title>
+
+  <!-- Bootstrap & Fonts -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Chart.js & jsPDF -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- Particle.js -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+  <style>
+    body, html {
+      font-family: 'Orbitron', sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow-x: hidden;
+      background: #0f2027;
+      position: relative;
+    }
+
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      top: 0;
+      left: 0;
+    }
+
+    .navbar {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 40px;
+      margin-top: 50px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 0 40px rgba(0, 255, 255, 0.15);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      animation: fadeIn 1.2s ease-out;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #00e6e6;
+      font-weight: bold;
+    }
+
+    label {
+      color: #aadada;
+    }
+
+    .form-control, .form-control-file {
+      background-color: rgba(0, 0, 0, 0.3);
+      color: #fff;
+      border: 1px solid #00e6e6;
+    }
+
+    .btn-primary {
+      background: linear-gradient(to right, #00e6e6, #007c7c);
+      border: none;
+      font-weight: bold;
+      box-shadow: 0 0 10px #00e6e6;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px #00e6e6;
+    }
+
+    footer {
+      margin-top: auto;
+      background-color: #111;
+      color: #bbb;
+      padding: 20px;
+      font-size: 14px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+      color: #00e6e6 !important;
+    }
+
+    .nav-link {
+      color: #aadada !important;
+      font-weight: 500;
+    }
+
+    .nav-link:hover {
+      color: #00ffff !important;
+    }
+
+    /* Page Fade-In Animation */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Loading Spinner Overlay */
+    #loadingOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      display: none;
+    }
+
+    .spinner-border {
+      width: 4rem;
+      height: 4rem;
+      color: #00e6e6;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Particles Background -->
+  <div id="particles-js"></div>
+
+  <!-- Spinner -->
+  <div id="loadingOverlay">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">Brain Tumor AI</a>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Form Card -->
+  <div class="container">
+    <h2>Brain Tumor Detection Portal</h2>
+    <form method="POST" enctype="multipart/form-data" onsubmit="showLoading()">
+      <div class="form-group">
+        <label for="patient_name">Patient Name:</label>
+        <input type="text" class="form-control" id="patient_name" name="patient_name" required>
+      </div>
+      <div class="form-group">
+        <label for="father_name">Father's Name:</label>
+        <input type="text" class="form-control" id="father_name" name="father_name" required>
+      </div>
+      <div class="form-group">
+        <label for="dob">Date of Birth:</label>
+        <input type="date" class="form-control" id="dob" name="dob" required>
+      </div>
+      <div class="form-group">
+        <label for="file">Upload MRI Image:</label>
+        <input type="file" class="form-control-file" id="file" name="file" accept=".jpg,.jpeg,.png" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Predict</button>
+    </form>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    &copy; 2025 Brain Tumor Detection System • Made with 💡 and ❤️
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    function showLoading() {
+      document.getElementById("loadingOverlay").style.display = "flex";
+    }
+
+    // ParticleJS Config
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 80 },
+        color: { value: "#00ffff" },
+        shape: { type: "circle" },
+        opacity: { value: 0.5 },
+        size: { value: 3 },
+        move: { enable: true, speed: 1.5 }
+      },
+      interactivity: {
+        events: {
+          onhover: { enable: true, mode: "repulse" },
+        }
+      }
+    });
+  </script>
+</body>
+</html>

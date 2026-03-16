@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Results</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .card {
+            background-color: #1e2a38;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+        .card-title {
+            color: #00e6e6;
+        }
+        canvas {
+            background-color: #fff;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            max-width: 300px;
+            max-height: 150px;
+        }
+        .btn-custom {
+            background-color: #00e6e6;
+            border: none;
+            color: #000;
+        }
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">BrainTumor.ai</a>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/dashboard">Predict Again</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="card p-4">
+        <h3 class="card-title">Prediction Results</h3>
+        <p><strong>Patient Name:</strong> {{ result.patient_name }}</p>
+        <p><strong>Father's Name:</strong> {{ result.father_name }}</p>
+        <p><strong>Date of Birth:</strong> {{ result.dob }}</p>
+        <p><strong>Prediction:</strong> {{ result.label }}</p>
+        <p><strong>Confidence:</strong> {{ result.confidence }}%</p>
+        <p><strong>Affected Area:</strong> {{ result.affected_area }}%</p>
+        <p><strong>Healthy Area:</strong> {{ result.healthy_area }}%</p>
+
+        <div class="row text-center">
+            <div class="col-md-4">
+                <h5>Confidence</h5>
+                <canvas id="barChart"></canvas>
+            </div>
+            <div class="col-md-4">
+                <h5>Brain Area Analysis</h5>
+                <canvas id="pieChart"></canvas>
+            </div>
+            <div class="col-md-4">
+                <h5>Confidence vs Area</h5>
+                <canvas id="donutChart"></canvas>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <button class="btn btn-custom" onclick="generatePDF()">Download Report</button>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2025 Brain Tumor Detection System</p>
+</footer>
+
+<script>
+    const result = {{ result | tojson }};
+
+    const ctxBar = document.getElementById('barChart').getContext('2d');
+    new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+            labels: ['Confidence'],
+            datasets: [{
+                label: result.label,
+                data: [result.confidence],
+                backgroundColor: '#00e6e6'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    const ctxPie = document.getElementById('pieChart').getContext('2d');
+    new Chart(ctxPie, {
+        type: 'pie',
+        data: {
+            labels: ['Affected Area', 'Healthy Area'],
+            datasets: [{
+                data: [result.affected_area, result.healthy_area],
+                backgroundColor: ['#ff4d4d', '#4dff88']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    const ctxDonut = document.getElementById('donutChart').getContext('2d');
+    new Chart(ctxDonut, {
+        type: 'doughnut',
+        data: {
+            labels: ['Confidence', 'Affected Area'],
+            datasets: [{
+                data: [result.confidence, result.affected_area],
+                backgroundColor: ['#00e6e6', '#ff4d4d']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '60%'
+        }
+    });
+
+    async function generatePDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.setFontSize(18);
+        doc.text("Brain Tumor Detection Report", 70, 20);
+
+        doc.setFontSize(12);
+        doc.setTextColor(0, 128, 0);
+        doc.text(`Patient Name: ${result.patient_name}`, 14, 35);
+        doc.text(`Father's Name: ${result.father_name}`, 14, 43);
+        doc.text(`Date of Birth: ${result.dob}`, 14, 51);
+
+        doc.setTextColor(0, 0, 0);
+        doc.text(`Prediction: ${result.label}`, 14, 59);
+        doc.text(`Confidence: ${result.confidence}%`, 14, 67);
+        doc.text(`Affected Area: ${result.affected_area}%`, 14, 75);
+        doc.text(`Healthy Area: ${result.healthy_area}%`, 14, 83);
+
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        const barCanvas = document.getElementById("barChart");
+        const barImage = barCanvas.toDataURL("image/png", 1.0);
+        doc.addPage();
+        doc.setFontSize(16);
+        doc.text("Confidence Bar Chart", 14, 20);
+        doc.addImage(barImage, "PNG", 15, 30, 140, 70);
+
+        const pieCanvas = document.getElementById("pieChart");
+        const pieImage = pieCanvas.toDataURL("image/png", 1.0);
+        doc.addPage();
+        doc.setFontSize(16);
+        doc.text("Brain Area Analysis", 14, 20);
+        doc.addImage(pieImage, "PNG", 15, 30, 140, 70);
+
+        const donutCanvas = document.getElementById("donutChart");
+        const donutImage = donutCanvas.toDataURL("image/png", 1.0);
+        doc.addPage();
+        doc.setFontSize(16);
+        doc.text("Confidence & Area Ratio", 14, 20);
+        doc.addImage(donutImage, "PNG", 15, 30, 140, 70);
+
+        doc.save("Brain_Tumor_Report.pdf");
+    }
+</script>
+
+</body>
+</html>

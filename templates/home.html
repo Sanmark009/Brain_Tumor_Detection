@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Brain Tumor Detection</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      overflow: hidden;
+    }
+
+    /* Spinning Neuron SVG Background */
+    .neuron-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      z-index: -1;
+      pointer-events: none;
+      animation: glowingBackground 10s ease-in-out infinite;
+    }
+
+    .neuron-background svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Hero section */
+    .hero {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.4); /* Dark transparent overlay */
+      backdrop-filter: blur(15px); /* Blur the content behind */
+      padding: 50px;
+      border-radius: 20px;
+      margin: 20px;
+      animation: fadeIn 3s ease-out;
+    }
+
+    /* Text Styles */
+    h1 {
+      font-size: 4rem;
+      color: #00e6e6;
+      text-shadow: 0 0 20px #00e6e6, 0 0 30px #00ffff, 0 0 40px #00ffcc, 0 0 50px #00ccff;
+      animation: glowingText 1.5s infinite alternate;
+    }
+
+    p {
+      font-size: 1.5rem;
+      margin-top: 15px;
+      color: #bbb;
+      text-shadow: 0 0 15px #fff, 0 0 30px #fff;
+    }
+
+    /* Button Styles */
+    .btn-login {
+      margin-top: 30px;
+      padding: 18px 40px;
+      font-size: 1.3rem;
+      background: linear-gradient(to right, #6200ee, #3700b3);
+      border: none;
+      color: white;
+      border-radius: 12px;
+      box-shadow: 0 0 30px #6200ee;
+      transition: all 0.3s ease-in-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-login::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 300%;
+      height: 300%;
+      background: #3700b3;
+      transition: all 0.4s ease;
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      z-index: 0;
+    }
+
+    .btn-login:hover::before {
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .btn-login:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 40px #7f00ff;
+      z-index: 1;
+    }
+
+    /* Loader Styles */
+    .loader-overlay {
+      position: fixed;
+      z-index: 9999;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .spinner {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #00e6e6;
+      border-radius: 50%;
+      width: 70px;
+      height: 70px;
+      animation: spin 1.2s linear infinite;
+    }
+
+    /* Keyframes for animations */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes glowingText {
+      0% { text-shadow: 0 0 20px #00e6e6, 0 0 30px #00ffff, 0 0 40px #00ffcc, 0 0 50px #00ccff; }
+      50% { text-shadow: 0 0 30px #ff69b4, 0 0 60px #ff1493, 0 0 80px #ff1493, 0 0 100px #ff1493; }
+      100% { text-shadow: 0 0 20px #00e6e6, 0 0 30px #00ffff, 0 0 40px #00ffcc, 0 0 50px #00ccff; }
+    }
+
+    @keyframes glowingBackground {
+      0% { background: linear-gradient(45deg, #6200ee, #3700b3); }
+      50% { background: linear-gradient(45deg, #00e6e6, #ff1493); }
+      100% { background: linear-gradient(45deg, #6200ee, #3700b3); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Media Queries for smaller screens */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+      .btn-login {
+        padding: 12px 30px;
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Spinning Neuron SVG Background -->
+  <div class="neuron-background">
+    <svg width="100%" height="100%">
+      <defs>
+        <circle id="neuron" r="2" fill="#00e6e6" />
+      </defs>
+      <g>
+        <!-- Multiple neuron-like nodes spinning -->
+        <use href="#neuron" x="50%" y="50%">
+          <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 400 300" to="360 400 300" dur="20s" repeatCount="indefinite" />
+        </use>
+        <use href="#neuron" x="400" y="300">
+          <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 400 300" to="-360 400 300" dur="25s" repeatCount="indefinite" />
+        </use>
+        <use href="#neuron" x="300" y="400">
+          <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 300 400" to="360 300 400" dur="18s" repeatCount="indefinite" />
+        </use>
+        <line x1="400" y1="300" x2="300" y2="400" stroke="#00e6e6" stroke-opacity="0.3">
+          <animate attributeName="stroke-opacity" values="0.3;0.6;0.3" dur="3s" repeatCount="indefinite" />
+        </line>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Hero content -->
+  <div class="hero">
+    <h1>🧠 Brain Tumor Detection System</h1>
+    <p>Smart detection using AI-powered MRI analysis</p>
+    <a href="/logout" class="btn btn-login">Login</a>
+  </div>
+
+  <!-- Loader -->
+  <div class="loader-overlay" id="loader">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- JS to remove loader -->
+  <script>
+    window.addEventListener("load", () => {
+      const loader = document.getElementById("loader");
+      if (loader) loader.style.display = "none";
+    });
+  </script>
+
+</body>
+</html>
