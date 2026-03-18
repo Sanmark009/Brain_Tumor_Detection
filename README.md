@@ -37,6 +37,12 @@ Brain Tumor Detection is a machine learning / deep learning-based system designe
   * No Tumor
 * Source: Kaggle / Medical datasets
 
+  Brain_Tumor_Dataset Link
+.h5 file:
+https://drive.google.com/file/d/17CNNdckAsXnhompleKW7xNHpYDZlXh8G/view?usp=sharing
+Dataset_Link:
+https://www.kaggle.com/datasets/masoudnickparvar/brain-tumor-mri-dataset
+
 ---
 
 ## ⚙️ Working Process
@@ -140,8 +146,4 @@ This project demonstrates how AI can be leveraged in healthcare to assist in ear
 
 
 
-Brain_Tumor_Dataset Link
-.h5 file:
-https://drive.google.com/file/d/17CNNdckAsXnhompleKW7xNHpYDZlXh8G/view?usp=sharing
-Dataset_Link:
-https://www.kaggle.com/datasets/masoudnickparvar/brain-tumor-mri-dataset
+
